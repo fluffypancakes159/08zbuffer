@@ -76,7 +76,8 @@ def gen_torus(matrix, step, *args) # 5 args: x, y, z, cross-section radius, exte
         step.times {|theta|
             points.push([Math.cos(Math::PI / step * phi * 2) * (args[3] * Math.cos(Math::PI / step * theta * 2) + args[4]) + args[0], 
                          args[3] * Math.sin(Math::PI / step * theta * 2) + args[1],
-                         -(Math.sin(Math::PI / step * phi * 2)) * (args[3] * Math.cos(Math::PI / step * theta * 2) + args[4]) + args[4]])
+                         (Math.sin(Math::PI / step * phi * 2)) * (args[3] * Math.cos(Math::PI / step * theta * 2) + args[4]) + args[4]]) 
+                        # this is supposed to be negative sin for z? but it shows the back of the torus unless i use positive sin so hmm
         }
     }
     # puts points.length

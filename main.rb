@@ -7,6 +7,7 @@ require_relative 'polygon'
 
 def main() # remember to change XRES and YRES
     out = Array.new(YRES) {Array.new(XRES, [0, 0, 0])}
+    zbuffer = Array.new(YRES) {Array.new(XRES, nil)}
     # transform = ident(4)
     edges = Array.new(0)
     triangles = Array.new(0)
@@ -58,54 +59,52 @@ def main() # remember to change XRES and YRES
             coords = file_data.shift.split(" ")
             add_edge(edges, *(coords.map {|x| x.to_f}))
             mult(stack[0], edges)
-            draw_matrix(out, edges, 0)
+            draw_matrix(out, edges, 0, zbuffer)
             edges.clear
         elsif current == 'circle'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f} # ! actually replaces the array
             add_circle(edges, *args) 
             mult(stack[0], edges)
-            draw_matrix(out, edges, 0)
+            draw_matrix(out, edges, 0, zbuffer)
             edges.clear
         elsif current == 'hermite'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f}
             add_hermite(edges, *args)
             mult(stack[0], edges)
-            draw_matrix(out, edges, 0)
+            draw_matrix(out, edges, 0, zbuffer)
             edges.clear
         elsif current == 'bezier'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f}
             add_bezier(edges, *args)
             mult(stack[0], edges)
-            draw_matrix(out, edges, 0)
+            draw_matrix(out, edges, 0, zbuffer)
             edges.clear
-=begin
         elsif current == 'clear'
-            edges.clear
-            triangles.clear
-=end
+            out = Array.new(YRES) {Array.new(XRES, [0, 0, 0])}
+            zbuffer = Array.new(YRES) {Array.new(XRES, nil)}
         elsif current == 'box'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f}
             add_box(triangles, *args)
             mult(stack[0], triangles)
-            draw_matrix(out, triangles, 1)
+            draw_matrix(out, triangles, 1, zbuffer)
             triangles.clear
         elsif current == 'sphere'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f}
             add_sphere(triangles, 20, *args)
             mult(stack[0], triangles)
-            draw_matrix(out, triangles, 1)
+            draw_matrix(out, triangles, 1, zbuffer)
             triangles.clear
         elsif current == 'torus'
             args = file_data.shift.split(" ")
             args.map! {|x| x.to_f}
             add_torus(triangles, 20, *args)
             mult(stack[0], triangles)
-            draw_matrix(out, triangles, 1)
+            draw_matrix(out, triangles, 1, zbuffer)
             triangles.clear
         elsif current == 'push'
             stack.unshift(stack[0].map {|x| x})
